@@ -45,7 +45,17 @@ def select(table, cols):
 
         arr.append(cat)
 
-    print(arr)
+    return arr
+
+def list2dict(lst):
+    dic = {}
+
+    count = 1
+    for x in lst:
+        wow[count] = x
+        count += 1
+    
+    return dic
 
 
 

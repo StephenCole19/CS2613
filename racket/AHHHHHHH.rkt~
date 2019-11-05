@@ -1,0 +1,17 @@
+#lang racket
+
+(define (list->hash lst hLst i)
+  (cond
+    [(equal? lst '()) ]
+    [else
+     (hash-set hLst (first lst) i) (list->hash (rest lst) hLst (add1 i))]))
+
+
+(module+ test
+  (require rackunit)
+  (define hash-table (list->hash (list "a" "b" "c") (hash) 1))
+  (hash-set hash-table "a" 1)
+  (hash->list hash-table)
+  (check-equal? (hash-ref hash-table 1) "a")
+  (check-equal? (hash-ref hash-table 2) "b")
+  (check-equal? (hash-ref hash-table 3) "c"))

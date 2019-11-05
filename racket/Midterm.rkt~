@@ -1,0 +1,5 @@
+#lang racket
+
+(define (tree-map fn x)
+  (fn (map x))
+)

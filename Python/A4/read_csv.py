@@ -1,4 +1,5 @@
 import csv
+import operator
 
 def read_csv(csvF):
     with open(csvF) as file:
@@ -15,11 +16,11 @@ table = read_csv("test.csv")
 
 def header_map():
     hmap = {}
-    i = len(table) - 1
+    i = 1
 
     for x in table[0]:
         hmap[i] = x
-        i -= 1
+        i += 1
 
     return hmap
 
@@ -45,19 +46,59 @@ def select(table, cols):
 
         arr.append(cat)
 
-    return arr
+        return arr
 
 def list2dict(lst):
-    dic = {}
+    d = {}
+    hm = header_map()
 
     count = 1
     for x in lst:
-        wow[count] = x
+        title = hm[count]
+        d[title] = x
         count += 1
     
-    return dic
+    return d
+
+OPERATOR_SYMBOLS = {
+    '<': operator.lt,
+    '<=': operator.le,
+    '==': operator.eq,
+    '!=': operator.ne,
+    '>': operator.gt,
+    '>=': operator.ge
+}
+
+class Condition:
+    def __init__(self, value1, op, value2):
+        self.value1 = value1
+        self.op = op
+        self.value2 = value2
+        
+    def test(self):
+        return OPERATOR_SYMBOLS[self.op](self.value1, self.value2)
 
 
+def check_row(d, lst):
+    for x in d:
+        if(x == lst[0]):
+            if(type(lst[2]) != str ):
 
+                cond = Condition(int(d[x]), lst[1], lst[2])
 
-select(table, {'name', "eye_colour"})
+                if(cond.test()):
+                    return True
+                else:
+                    return False
+            else:
+
+                cond = Condition((d[x]), lst[1], lst[2])
+
+                if(cond.test()):
+                    return True
+                else:
+                    return False
+
+#print(list2dict(table[1]))
+#print(header_map())
+print(check_row(list2dict(table[1]), ('age', '>', 4)))

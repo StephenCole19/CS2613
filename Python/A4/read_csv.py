@@ -14,7 +14,7 @@ def read_csv(csvF):
 
 table = read_csv("test.csv")
 
-def header_map():
+def header_map(table):
     hmap = {}
     i = 1
 
@@ -30,7 +30,7 @@ def select(table, cols):
     r = []
 
     count = 0
-    hm = header_map()
+    hm = header_map(table)
 
     for x in cols:
         count = 0
@@ -48,10 +48,8 @@ def select(table, cols):
 
         return arr
 
-def list2dict(lst):
+def row2dict(hm, lst):
     d = {}
-    hm = header_map()
-
     count = 1
     for x in lst:
         title = hm[count]
@@ -66,7 +64,9 @@ OPERATOR_SYMBOLS = {
     '==': operator.eq,
     '!=': operator.ne,
     '>': operator.gt,
-    '>=': operator.ge
+    '>=': operator.ge,
+    'AND': operator.and_,
+    'OR' : operator.or_
 }
 
 class Condition:
@@ -80,25 +80,41 @@ class Condition:
 
 
 def check_row(d, lst):
-    for x in d:
-        if(x == lst[0]):
-            if(type(lst[2]) != str ):
+   
+    if(type(lst[0]) == tuple):
+        arr = []
+        for x in d:
+            if(x == lst[0][0]):
+                val = d[x]
+                if(type(lst[0][2]) != str ):
+                    val = int(d[x])
+                cond = Condition(int(d[x]), lst[0][1], lst[0][2])
+                arr.append(cond.test())
 
-                cond = Condition(int(d[x]), lst[1], lst[2])
+            if(x == lst[2][0]):
+                val = d[x]
+                if(type(lst[2][2]) != str ):
+                    val = int(d[x])
 
-                if(cond.test()):
-                    return True
-                else:
-                    return False
-            else:
+                cond = Condition(val, lst[2][1], lst[2][2])
+                arr.append(cond.test())
 
-                cond = Condition((d[x]), lst[1], lst[2])
+        cond = Condition(arr[0], lst[1], arr[1])
+        return cond.test()
 
-                if(cond.test()):
-                    return True
-                else:
-                    return False
+    else:
+        for x in d:
+            if(x == lst[0]):
+                if(type(lst[2]) != str ):
+                    val = int(d[x])
 
-#print(list2dict(table[1]))
-#print(header_map())
-print(check_row(list2dict(table[1]), ('age', '>', 4)))
+                cond = Condition(val, lst[1], lst[2])
+                return cond.test()
+
+
+
+#print(check_row(list2dict(table[1]), (('age', '==', 5),'OR',('eye colour', '==', 'blue'))))
+print(check_row(row2dict(header_map(table), table[1]), ('age', '==', 5)))
+
+s = (('age', '==', 5),'OR',('eye_colour', '==', 'blue'))
+print(check_row(row2dict(header_map(table), table[1]), s))

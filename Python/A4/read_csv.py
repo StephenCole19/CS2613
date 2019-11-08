@@ -2,6 +2,8 @@ import csv
 import operator
 
 def read_csv(csvF):
+    '''Reads csv file into an array'''
+
     with open(csvF) as file:
         arr = []
         reader = csv.reader(file, delimiter=",")
@@ -12,32 +14,37 @@ def read_csv(csvF):
         return arr
 
 
-table = read_csv("test.csv")
+table = read_csv("test1.csv")
 
 def header_map(table):
-    hmap = {}
-    i = 1
+    '''Maps headers into a dictionary'''
 
-    for x in table[0]:
-        hmap[i] = x
+    hmap = {}
+    i = 0
+
+    while(i < len(table)):
+        hmap[table[i]] = i 
         i += 1
 
     return hmap
 
 
 def select(table, cols):
+    '''Selects rows with certain headers contained in cols'''
+
     arr = []
     r = []
 
     count = 0
-    hm = header_map(table)
+    hm = header_map(table[0])
 
     for x in cols:
         count = 0
-        while(count < len(table)-1):
-            if(x == table[0][count]):
+        for y in hm:
+            if(x == y):
                 r.append(count)
             count += 1
+
 
     for row in table:
         cat = []
@@ -46,75 +53,47 @@ def select(table, cols):
 
         arr.append(cat)
 
-        return arr
+    return arr
+
 
 def row2dict(hm, lst):
+    '''converts a row of a table into a dictionary'''
+
     d = {}
-    count = 1
-    for x in lst:
-        title = hm[count]
-        d[title] = x
+    count = 0
+
+    for key in hm:
+        d[key] = lst[count]
         count += 1
     
     return d
 
-OPERATOR_SYMBOLS = {
-    '<': operator.lt,
-    '<=': operator.le,
-    '==': operator.eq,
-    '!=': operator.ne,
-    '>': operator.gt,
-    '>=': operator.ge,
-    'AND': operator.and_,
-    'OR' : operator.or_
-}
-
-class Condition:
-    def __init__(self, value1, op, value2):
-        self.value1 = value1
-        self.op = op
-        self.value2 = value2
-        
-    def test(self):
-        return OPERATOR_SYMBOLS[self.op](self.value1, self.value2)
 
 
-def check_row(d, lst):
-   
-    if(type(lst[0]) == tuple):
-        arr = []
-        for x in d:
-            if(x == lst[0][0]):
-                val = d[x]
-                if(type(lst[0][2]) != str ):
-                    val = int(d[x])
-                cond = Condition(int(d[x]), lst[0][1], lst[0][2])
-                arr.append(cond.test())
+def check_row(row, lst):
+    '''Checks to see if the row is equal to the condtions in lst'''
 
-            if(x == lst[2][0]):
-                val = d[x]
-                if(type(lst[2][2]) != str ):
-                    val = int(d[x])
-
-                cond = Condition(val, lst[2][1], lst[2][2])
-                arr.append(cond.test())
-
-        cond = Condition(arr[0], lst[1], arr[1])
-        return cond.test()
-
+    ops = {"==": operator.eq, '<=': operator.le, ">=": operator.ge, 'AND': operator.and_, 'OR': operator.or_}
+    if isinstance(lst[2], int):
+        try:
+            return (ops[lst[1]](int(row[lst[0]]), int(lst[2])))
+        except:
+            return False
+    elif isinstance(lst[2], str):
+        try:
+            return (ops[lst[1]](int(row[lst[0]]), int(lst[2])))
+        except Exception:
+            return (ops[lst[1]](str(row[lst[0]]), str(lst[2])))
     else:
-        for x in d:
-            if(x == lst[0]):
-                if(type(lst[2]) != str ):
-                    val = int(d[x])
+        return (ops[lst[1]](check_row(row,lst[0]), check_row(row, lst[2])))
 
-                cond = Condition(val, lst[1], lst[2])
-                return cond.test()
+def filter_table(table, lst):
+    '''filters the entire table based on a list of conditions'''
 
-
-
-#print(check_row(list2dict(table[1]), (('age', '==', 5),'OR',('eye colour', '==', 'blue'))))
-print(check_row(row2dict(header_map(table), table[1]), ('age', '==', 5)))
-
-s = (('age', '==', 5),'OR',('eye_colour', '==', 'blue'))
-print(check_row(row2dict(header_map(table), table[1]), s))
+    output = []
+    hmap = header_map(table[0])
+    output.append(table[0])
+    for row in table:
+        if check_row(row2dict(hmap, row), lst):
+            output.append(row)
+    return output

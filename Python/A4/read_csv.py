@@ -13,8 +13,9 @@ def read_csv(csvF):
         
         return arr
 
+data = read_csv("test2.csv")
+tabl= read_csv("test1.csv")
 
-table = read_csv("test1.csv")
 
 def header_map(table):
     '''Maps headers into a dictionary'''
@@ -55,6 +56,7 @@ def select(table, cols):
 
     return arr
 
+print(select(data,{'species','Real'}))
 
 def row2dict(hm, lst):
     '''converts a row of a table into a dictionary'''

@@ -1,10 +1,15 @@
 [
   "test_read_csv.py::test_read_csv",
+  "test_read_csv.py::test_read_csv2",
   "test_read_csv.py::test_header_map_1",
+  "test_read_csv.py::test_header_map_2",
   "test_read_csv.py::test_select_1",
+  "test_read_csv.py::test_select_2",
   "test_read_csv.py::test_row2dict",
   "test_read_csv.py::test_check_row",
+  "test_read_csv.py::test_check_row2",
   "test_read_csv.py::test_check_row_logical",
   "test_read_csv.py::test_filter_table1",
-  "test_read_csv.py::test_filter_table2"
+  "test_read_csv.py::test_filter_table2",
+  "test_read_csv.py::test_filter_table3"
 ]

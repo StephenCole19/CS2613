@@ -1,0 +1,18 @@
+[
+  "test_enum.py::test_enum",
+  "test_ledger.py::test_empty",
+  "test_ledger.py::test_balance",
+  "test_ledger.py::test_open",
+  "test_ledger.py::test_transfer_open",
+  "test_scanner.py::test_scan_currency",
+  "test_scanner.py::test_scan_bad",
+  "test_scanner.py::test_scan_transfer",
+  "test_scanner.py::test_scan_open",
+  "test_scanner.py::test_scan_balance",
+  "test_scanner.py::test_scan_ident",
+  "test_token.py::test_token",
+  "test_token.py::test_str",
+  "test_token.py::test_equal_ident",
+  "test_token.py::test_equal_keywords",
+  "test_token.py::test_equal_currency"
+]
